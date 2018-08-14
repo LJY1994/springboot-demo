@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="cn.hitsz.bme.mapper.UserMapper">
+
+	<resultMap type="UserLogined" id="LoginMap">
+		<id column = "userId" property = "userId" jdbcType="BIGINT"/>
+		<id column = "userAccount" property = "userAccount" jdbcType="VARCHAR"/>
+		<id column = "userPassword" property = "userPassword" jdbcType="VARCHAR"/>
+		<id column = "name" property = "name" jdbcType="VARCHAR"/>
+		<id column = "email" property = "email" jdbcType="VARCHAR"/>
+		<id column = "userType" property = "userType" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<sql id="BaseColumnList">
+		userId,userAccount,userPassword,name,email,userType
+	</sql>
+	
+	<select id="findAllUser" resultType = "UserLogined">
+		SELECT <include refid = "BaseColumnList" /> 
+		FROM 
+			table_user_password
+	</select>
+	
+	<select id="findAUser" resultType = "UserLogined">
+		SELECT <include refid = "BaseColumnList" /> 
+		FROM 
+			table_user_password
+		WHERE userAccount = #{userAccount}
+	</select>
+	
+	<select id="findUser" resultType = "UserLogined">
+		SELECT <include refid = "BaseColumnList" /> 
+		FROM 
+			table_user_password
+		WHERE userAccount = #{user}
+	</select>
+	
+	<insert id="register" parameterType="UserLogined">
+		INSERT INTO 
+			table_user_password
+			(userAccount,userPassword)
+		VALUES
+			(#{account}, #{password})
+	</insert>
+	
+	<update id="updateAccount" parameterType="UserLogined" >
+       UPDATE 
+       		table_user_password 
+       SET 
+    	<if test="userAccount != null">userAccount = #{userAccount},</if>
+       	<if test="userPassword != null">userPassword = #{userPassword},</if>
+       	name = #{name},
+       	email = #{email},
+       	userType = #{userType}
+       WHERE 
+       		userAccount = #{userAccount}
+    </update>
+	
+	<delete id="deleteAccount" parameterType="java.lang.Long" >
+       DELETE FROM
+       		 table_user_password 
+       WHERE 
+       		 userId = #{userId}
+    </delete>
+    
+    <resultMap type="UserInfo" id="UserInfoMap">
+		<id column = "userId" property = "userId" jdbcType="BIGINT"/>
+		<id column = "user_real_name" property = "user_real_name" jdbcType="CHAR"/>
+		<id column = "user_age" property = "user_age" jdbcType="CHAR"/>
+		<id column = "user_gender" property = "user_gender" jdbcType="CHAR"/>
+		<id column = "user_height" property = "user_height" jdbcType="FLOAT"/>
+		<id column = "user_weight" property = "user_weight" jdbcType="FLOAT"/>
+		<id column = "registerDate" property = "registerDate" jdbcType="DATE"/>
+	</resultMap>
+	
+	<sql id="InfoColumnList">
+		userId,user_real_name,user_age,user_gender,user_height,user_weight,registerDate
+	</sql>
+    
+	<select id="getUserInfo" resultType = "UserInfo">
+		SELECT <include refid="InfoColumnList"/>
+		FROM
+			table_user_general_info
+		WHERE
+			userId =#{userId}
+	</select>
+
+	<insert id="addInfo" parameterType="UserInfo">
+		INSERT INTO 
+			table_user_general_info
+			(userId,user_real_name,user_age,user_gender,user_height,user_weight,registerDate)
+		VALUES
+			(#{userId}, #{user_real_name},#{user_age}, #{user_gender},#{user_height}, #{user_weight},#{registerDate})
+	</insert>
+	
+	<update id="updateInfo" parameterType="UserInfo" >
+       UPDATE 
+       		table_user_general_info 
+       SET 
+       	<if test="userId != null">userId = #{userId},</if>
+       	user_real_name = #{user_real_name},
+       	user_age = #{user_age},
+       	user_gender = #{user_gender},
+       	user_height = #{user_height},
+       	user_weight = #{user_weight},
+       	registerDate = #{registerDate}
+       WHERE 
+       		id = #{id}
+    </update>
+    
+</mapper>
